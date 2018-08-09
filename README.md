@@ -10,4 +10,8 @@ I only implement the light attentive convolution described in Sect. 3.1 of the p
 ![](.github/e4ff1f17.png)
 
 
+Authors argue that `AttConv` outperforms some of pioneering attentive RNNs in both intra-context (`context=query`, i.e. self-attention) and extra-context (`context!=query`) settings.
+
+## Run 
+
 Run `app.py` for a simple test on toy data.
