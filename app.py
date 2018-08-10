@@ -18,8 +18,16 @@ if __name__ == '__main__':
     context_mask = tf.sequence_mask([4, 3], 5, dtype=tf.float32, name='query_mask')
     query_mask = tf.sequence_mask([2, 3], 3, dtype=tf.float32, name='query_mask')
 
-    output = AttentiveCNN_match(context, query, context_mask, query_mask, residual=True, normalize_output=True)
+    # standard att-cnn
+    output1 = AttentiveCNN_match(context, query, context_mask, query_mask, scope='attcnn1')
+    # with res and layernorm
+    output2 = AttentiveCNN_match(context, query, context_mask, query_mask,
+                                 residual=True, normalize_output=True, scope='attcnn2')
+    # ensure causality
+    output3 = AttentiveCNN_match(context, query, context_mask, query_mask,
+                                 casuality=True, scope='attcnn3')
 
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
-        print(sess.run(output))
+        for v in sess.run([output1, output2, output3]):
+            print(v)

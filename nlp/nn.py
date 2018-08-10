@@ -290,3 +290,38 @@ def get_lstm_init_state(batch_size, num_layers, num_units, direction, scope=None
         h = get_var('lstm_init_h', shape=[num_layers * num_dir, num_units])
         h = tf.tile(tf.expand_dims(h, axis=1), [1, batch_size, 1])
         return c, h
+
+
+def dropout_res_layernorm(x, fx, act_fn=tf.nn.relu,
+                          dropout_keep_rate=1.0,
+                          residual=False,
+                          normalize_output=False,
+                          scope='rnd_block',
+                          reuse=None, **kwargs):
+    with tf.variable_scope(scope, reuse=reuse):
+        input_dim = x.get_shape().as_list()[-1]
+        output_dim = fx.get_shape().as_list()[-1]
+
+        # do dropout
+        fx = tf.nn.dropout(fx, keep_prob=dropout_keep_rate)
+
+        if residual and input_dim != output_dim:
+            res_x = tf.layers.conv1d(x,
+                                     filters=output_dim,
+                                     kernel_size=1,
+                                     activation=None,
+                                     name='res_1x1conv')
+        else:
+            res_x = x
+
+        if residual and act_fn is None:
+            output = fx + res_x
+        elif residual and act_fn is not None:
+            output = act_fn(fx + res_x)
+        else:
+            output = fx
+
+        if normalize_output:
+            output = layer_norm(output)
+
+        return output
