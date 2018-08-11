@@ -11,7 +11,7 @@ I only implement the light attentive convolution described in Sect. 3.1 of the p
 
 ## What did I change?
 
-Nothing big. I do made some minor changes: 
+Nothing big. I do add some features: 
 1. add a `dropout-resnet-layernorm` block before the output
 2. add masking to ensure causality, so that one may use it for decoding as well.  
 
